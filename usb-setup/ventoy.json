@@ -1,0 +1,11 @@
+{
+    "control": [
+        { "VTOY_DEFAULT_MENU_MODE": "0" }
+    ],
+    "auto_install": [
+        {
+            "image": "/ubuntu-24.04-server-amd64.iso",
+            "template": "/ventoy/user-data"
+        }
+    ]
+}

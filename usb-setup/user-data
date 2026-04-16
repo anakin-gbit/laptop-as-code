@@ -1,0 +1,25 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: laptop-as-code
+    username: ubuntu
+    password: "$6$aRLTrAC5QQyBzFPY$hFJAlFMHsclanr0y3As5frgWx19GEW6/8AS/Uxw5Nrl8zVAj9KHLynqqvx7XelJqm7HeedKvkuW2ARTSi1l/w1" # ubuntu
+  network:
+    network:
+      version: 2
+      wifis:
+        renderer: networkd
+        wlo1:
+          dhcp4: true
+          access-points:
+            "SSID":
+              password: "password"
+  user-data:
+    runcmd:
+      - [ cloud-init, wait, done ]
+      - curl -sL https://raw.githubusercontent.com/anakin-gbit/laptop-as-code/main/bootstrap.sh -o /tmp/bootstrap.sh
+      - chmod +x /tmp/bootstrap.sh
+      - sudo -u anakin /tmp/bootstrap.sh
+
+
