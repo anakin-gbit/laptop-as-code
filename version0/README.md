@@ -29,3 +29,15 @@ To bootstrap a new instance:
 - [ ] Core GUI (TBD)
 - [ ] Laptop QoL & Power Mgmt
 - [ ] SSO Identity Integration
+
+
+## User data
+
+Generate a password hash
+```bash
+# Generate a password
+openssl passwd -6 -salt $(openssl rand -base64 12) "my-password"
+
+
+
+```

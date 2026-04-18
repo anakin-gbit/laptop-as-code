@@ -1,0 +1,36 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  keyboard:
+    layout: gb
+
+  # REMOVED: The network section. 
+  # This stops Subiquity from trying to run 'netplan apply'.
+
+  identity:
+    hostname: hermit
+    username: ubuntu
+    password: "$6$aGHlsa24FxG67jRm$0WAwrnNCG7JnhS2IHPLbHF2204.t1dOAWWg7599Dnj/Fqt8wT8fkW6jm76MEQdcc7tbaiMdItQSS48Tisqukn/" # ubuntu
+
+  ssh:
+    install-server: true
+    allow-pw: true
+
+  storage:
+    layout:
+      name: direct
+
+  # THIS is the part that actually writes the file to the disk
+  late-commands:
+    - |
+      cat <<EOF > /target/etc/netplan/00-installer-config.yaml
+      network:
+        version: 2
+        renderer: networkd
+        ethernets:
+          id0:
+            match:
+              name: "e*"
+            dhcp4: true
+      EOF
