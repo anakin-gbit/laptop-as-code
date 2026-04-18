@@ -24,6 +24,7 @@ autoinstall:
   # THIS is the part that actually writes the file to the disk
   late-commands:
     - |
+      # 1. Write Netplan
       cat <<EOF > /target/etc/netplan/00-installer-config.yaml
       network:
         version: 2
@@ -34,3 +35,12 @@ autoinstall:
               name: "e*"
             dhcp4: true
       EOF
+      
+      # 2. Re-assert permissions on the file
+      chmod 600 /target/etc/netplan/00-installer-config.yaml
+
+    - curtin in-target -- ip link set up dev $(ip -o link show | grep 'e.*:' | awk -F': ' '{print $2}' | head -n1)
+    - curtin in-target -- dhclient
+    - curtin in-target -- curl -sL https://raw.githubusercontent.com/anakin-gbit/laptop-as-code/main/version1/public-bootstrap.sh -o /tmp/public-bootstrap.sh
+    - curtin in-target -- chmod +x /tmp/public-bootstrap.sh
+    - curtin in-target -- /bin/bash /tmp/public-bootstrap.sh

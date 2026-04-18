@@ -1,5 +1,17 @@
 #!/bin/bash
 
+echo "################################################################"
+echo "################################################################"
+echo "####                public-bootstrap.sh                     ####"
+echo "################################################################"
+echo "################################################################"
+echo "Running public bootstrap script..."
+echo "Dry run.  Exiting."
+echo "################################################################"
+echo "################################################################"
+exit
+
+
 # Ensure we run with elevated privileges
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root (use sudo)"
@@ -10,12 +22,13 @@ export DEBIAN_FRONTEND=noninteractive
 USER_NAME="anakin"
 USER_HOME="/home/$USER_NAME"
 
-echo "--- Checking Connectivity ---"
-# Check if already connected, otherwise attempt connection
-if ! nmcli -t -f active,ssid dev wifi | grep -q "^yes:Derventio"; then
-    echo "Connecting to Derventio..."
-    nmcli dev wifi connect "Derventio" password "YEWK1AZVQ7HJ4" || echo "Wifi connection failed, continuing..."
-fi
+# Move wifi connection to private-bootstrap
+# echo "--- Checking Connectivity ---"
+# # Check if already connected, otherwise attempt connection
+# if ! nmcli -t -f active,ssid dev wifi | grep -q "^yes:SSID"; then
+#     echo "Connecting to SSID..."
+#     nmcli dev wifi connect "SSID" password "WIFI_PASSWORD" || echo "Wifi connection failed, continuing..."
+# fi
 
 echo "--- Configuring External Repositories ---"
 # Create keyring directory if missing
