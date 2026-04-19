@@ -4,12 +4,10 @@ echo "################################################################"
 echo "################################################################"
 echo "####                public-bootstrap.sh                     ####"
 echo "################################################################"
+echo "Starting public bootstrap script..."
 echo "################################################################"
-echo "Running public bootstrap script..."
-echo "Dry run.  Exiting."
-echo "################################################################"
-echo "################################################################"
-exit
+
+touch /usr/local/bin/public_bootstrap_ran
 
 
 # Ensure we run with elevated privileges
@@ -93,4 +91,12 @@ dpkg -l | grep -q "^ii  fonts-noto-cjk" && apt-get purge -y fonts-noto-cjk
 apt-get autoremove -y --purge
 apt-get clean
 
-echo "--- Bootstrap Sequence Complete ---"
+
+echo "################################################################"
+echo "################################################################"
+echo "####                public-bootstrap.sh                     ####"
+echo "################################################################"
+echo "Public Bootstrap Sequence Complete"
+echo "################################################################"
+
+
