@@ -24,6 +24,19 @@ The build process aims to be fully automated, but pragmatism requires some inter
 ---
 
 
+## Step 0 - Prepare user-data
+```bash
+USER_DATA="/home/anakin/projects/laptop-as-code/version1/user-data"
+
+# install validation tools for validation
+sudo apt update && sudo apt install cloud-init -y
+
+# Validate schema
+clear && sudo cloud-init schema --config-file "$USER_DATA" --annotate
+```
+
+
+
 ## Step 1 - Install Ubuntu
 - Create install USB from Ubuntu Server iso using rufus
 - Format a second USB fat32 with label `whatever`, and add user-data and meta-data

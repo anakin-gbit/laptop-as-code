@@ -10,8 +10,8 @@ autoinstall:
 
   identity:
     hostname: hermit
-    username: ubuntu
-    password: "$6$aGHlsa24FxG67jRm$0WAwrnNCG7JnhS2IHPLbHF2204.t1dOAWWg7599Dnj/Fqt8wT8fkW6jm76MEQdcc7tbaiMdItQSS48Tisqukn/" # ubuntu
+    username: anakin
+    password: "$6$nqtWxwBprqsWYxsX$o2N.7k/Cg7DOA9GjYOJcRuje/oT2KyWuC79oZBCYh.Gf.3sr1aw.Cvnf3tS/2tAwrS5/9ByP2.S3q38n1nk96/"
 
   ssh:
     install-server: true
@@ -23,8 +23,8 @@ autoinstall:
 
   # THIS is the part that actually writes the file to the disk
   late-commands:
+    # ITEM 1: Write the file
     - |
-      # 1. Write Netplan
       cat <<EOF > /target/etc/netplan/00-installer-config.yaml
       network:
         version: 2
@@ -35,12 +35,27 @@ autoinstall:
               name: "e*"
             dhcp4: true
       EOF
-      
-      # 2. Re-assert permissions on the file
-      chmod 600 /target/etc/netplan/00-installer-config.yaml
 
-    - curtin in-target -- ip link set up dev $(ip -o link show | grep 'e.*:' | awk -F': ' '{print $2}' | head -n1)
-    - curtin in-target -- dhclient
-    - curtin in-target -- curl -sL https://raw.githubusercontent.com/anakin-gbit/laptop-as-code/main/version1/public-bootstrap.sh -o /tmp/public-bootstrap.sh
-    - curtin in-target -- chmod +x /tmp/public-bootstrap.sh
-    - curtin in-target -- /bin/bash /tmp/public-bootstrap.sh
+    # ITEM 2: Run the network commands (Notice the NEW DASH here)
+    - |
+      curtin in-target -- bash -c "
+        # 2. Force Netplan to take over and wake the port
+        netplan apply
+        
+        # 3. Add DNS manually just in case
+        echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+        
+        # 4. Wait for the negotiation
+        sleep 10
+        
+        # 5. Download and Run
+        curl -sL https://raw.githubusercontent.com/anakin-gbit/laptop-as-code/main/version1/public-bootstrap.sh -o /usr/local/bin/public-bootstrap.sh
+        
+        if [ -f /usr/local/bin/public-bootstrap.sh ]; then
+          chmod +x /usr/local/bin/public-bootstrap.sh
+          /bin/bash /usr/local/bin/public-bootstrap.sh
+        fi
+        
+        # Log status for you to check
+        ip addr show > /root/install_network_status.txt
+      "
